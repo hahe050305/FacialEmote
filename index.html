@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Pro | Master Build</title>
+    <title>Aura Pro | Final Production</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --bg-neutral: #050506; --bg-happy: #022c22; --bg-sad: #0c1a40; 
             --bg-frustrated: #310606; --bg-surprised: #331704;
-            --accent: linear-gradient(45deg, #3b82f6, #8b5cf6);
         }
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: -apple-system, sans-serif; color: #fff; overflow: hidden; }
         
@@ -27,17 +26,14 @@
         .bar-trail { flex-grow: 1; height: 3px; background: rgba(255,255,255,0.05); margin: 0 10px; border-radius: 2px; overflow: hidden; }
         .bar-glow { height: 100%; width: 0%; transition: width 0.8s linear; box-shadow: 0 0 10px currentColor; }
 
-        /* MODERN VIEWPORT: Gradient Ring */
-        .view-circle-wrapper { 
+        /* CLEAN MINIMAL VIEWPORT */
+        .view-circle { 
             position: relative; width: 48vw; height: 48vw; max-width: 200px; margin: 10px auto;
-            padding: 4px; border-radius: 50%;
-            background: var(--accent);
-            animation: rotateGradient 4s linear infinite;
+            border-radius: 50%; overflow: hidden; 
+            border: 2px solid #ffffff; /* Modern White Border */
+            background: #000; 
         }
-        @keyframes rotateGradient { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-
-        .view-circle { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #000; position: relative; z-index: 2; }
-        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0.8; }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0.9; }
         
         #mood-label { display: inline-block; padding: 6px 20px; border-radius: 4px; background: rgba(255,255,255,0.05); font-weight: 800; letter-spacing: 3px; font-size: 0.65rem; border-bottom: 2px solid rgba(255,255,255,0.2); margin-top: 10px; }
 
@@ -62,18 +58,16 @@
             <div class="stats-card" id="vibe-bars"></div>
             
             <div style="text-align:center;">
-                <div class="view-circle-wrapper" id="ring-glow">
-                    <div class="view-circle"><video id="webcam" autoplay playsinline muted></video></div>
-                </div>
-                <div id="mood-label">BOOTING</div>
+                <div class="view-circle"><video id="webcam" autoplay playsinline muted></video></div>
+                <div id="mood-label">CALIBRATING</div>
             </div>
 
             <div class="report-box">
                 <div class="report-header" id="report-type">Neural Interface</div>
-                <div class="insight-text" id="insight-display">Please maintain a neutral expression to zero-out sensors...</div>
+                <div class="insight-text" id="insight-display">Maintain a neutral face to zero-out baseline noise...</div>
             </div>
 
-            <div style="font-size:0.4rem; opacity:0.2; text-align:center; letter-spacing:3px; padding-bottom:5px;">AURA PRO V37.0 // MASTER BUILD</div>
+            <div style="font-size:0.4rem; opacity:0.2; text-align:center; letter-spacing:3px; padding-bottom:5px;">AURA PRO V38.0 // STABLE BUILD</div>
         </div>
     </div>
 
@@ -81,19 +75,19 @@
     import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
     const INSIGHTS = {
-        Neutral: ["Resting state detected. Use this baseline for high-accuracy decision making.", "Maintaining homeostatic equilibrium. Oxygen flow is currently optimal."],
+        Neutral: ["Resting state detected. Use this baseline for high-accuracy focus.", "Maintaining homeostatic equilibrium. Oxygen flow is currently optimal."],
         Happy: ["You're part of 90% who are happy today! Endorphins are active.", "Dopamine surge detected. Creative problem-solving is increased by 20%."],
         Sad: ["Localized sadness is a natural reset for recovery. Allow the system to rest.", "Reflective state detected. This improves future resilience."],
-        Frustrated: ["Prolonged frustration can cause muscle aging. Relax the brow.", "Release jaw tension; nothing is lost. Breathe slowly."],
-        Surprised: ["Amodal startle response. Your brain is processing data at 10x speed.", "Amygdala activation spike. Rapid response mode is prioritized."]
+        Frustrated: ["Prolonged frustration can cause muscle aging. Relax the brow; nothing is lost.", "Release jaw tension; keep cool and calm. Breathe slowly."],
+        Surprised: ["Flexible startle response. Your brain is processing data at 10x speed.", "Sensory alertness triggered. This state maximizes info gathering."]
     };
 
     const UI_CONFIG = {
-        Neutral: { color: "#050506", ring: "linear-gradient(45deg, #3b82f6, #8b5cf6)", bar: "#3f3f46" },
-        Happy: { color: "#022c22", ring: "linear-gradient(45deg, #10b981, #34d399)", bar: "#10b981" },
-        Sad: { color: "#0c1a40", ring: "linear-gradient(45deg, #3b82f6, #60a5fa)", bar: "#3b82f6" },
-        Frustrated: { color: "#310606", ring: "linear-gradient(45deg, #ef4444, #f87171)", bar: "#ef4444" },
-        Surprised: { color: "#331704", ring: "linear-gradient(45deg, #f59e0b, #fbbf24)", bar: "#f59e0b" }
+        Neutral: { color: "#050506", bar: "#3f3f46" },
+        Happy: { color: "#022c22", bar: "#10b981" },
+        Sad: { color: "#0c1a40", bar: "#3b82f6" },
+        Frustrated: { color: "#310606", bar: "#ef4444" },
+        Surprised: { color: "#331704", bar: "#f59e0b" }
     };
 
     let faceLandmarker, video = document.getElementById("webcam");
@@ -135,8 +129,12 @@
                 const smile = (s.mouthSmileLeft + s.mouthSmileRight) / 2 - (baseline.mouthSmileLeft + baseline.mouthSmileRight) / 2;
                 const browDown = ((s.browDownLeft + s.browDownRight) / 2) - ((baseline.browDownLeft + baseline.browDownRight) / 2);
                 const frown = Math.max(s.mouthFrownLeft, s.mouthFrownRight) - Math.max(baseline.mouthFrownLeft, baseline.mouthFrownRight);
+                
+                // FLEXIBLE SURPRISE LOGIC: Eye widen OR jaw drop OR both
+                const eyeWiden = Math.max(s.eyeWideLeft, s.eyeWideRight) - Math.max(baseline.eyeWideLeft, baseline.eyeWideRight);
+                const jawOpen = s.jawOpen - baseline.jawOpen;
 
-                if (s.eyeWideLeft > baseline.eyeWideLeft + 0.3) det = "Surprised";
+                if (eyeWiden > 0.25 || jawOpen > 0.35) det = "Surprised"; // Lower threshold for more flexibility
                 else if (smile > 0.45) det = "Happy";
                 else if (frown > 0.4 || (s.browInnerUp - baseline.browInnerUp) > 0.4) det = "Sad";
                 else if (browDown > 0.22) det = "Frustrated";
@@ -155,10 +153,8 @@
                 if (counts[topMood] >= 9 && topMood !== currentMood) {
                     currentMood = topMood;
                     document.getElementById('phone-wrapper').style.background = UI_CONFIG[topMood].color;
-                    document.getElementById('ring-glow').style.background = UI_CONFIG[topMood].ring;
                     document.getElementById("mood-label").innerText = topMood.toUpperCase();
                     
-                    // Fixed Insight Rotation Logic
                     const display = document.getElementById('insight-display');
                     display.style.opacity = 0;
                     setTimeout(() => {
