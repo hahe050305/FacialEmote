@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Pro | Bio-Insights</title>
+    <title>Aura Pro | Master Build</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.js" crossorigin="anonymous"></script>
     <style>
         :root {
@@ -21,22 +21,19 @@
 
         #app { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; justify-content: space-between; }
         
-        /* Stats Dashboard */
         .stats-card { background: rgba(255,255,255,0.02); padding: 12px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); }
         .stat-row { display: flex; align-items: center; margin: 8px 0; font-size: 0.5rem; font-weight: 800; letter-spacing: 2px; color: #52525b; }
         .bar-trail { flex-grow: 1; height: 3px; background: rgba(255,255,255,0.05); margin: 0 10px; border-radius: 2px; overflow: hidden; }
         .bar-glow { height: 100%; width: 0%; transition: width 0.8s linear; box-shadow: 0 0 10px currentColor; }
 
-        /* The Viewport */
-        .view-circle { position: relative; width: 45vw; height: 45vw; max-width: 180px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000; margin: 10px auto; }
+        .view-circle { position: relative; width: 42vw; height: 42vw; max-width: 180px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000; margin: 10px auto; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0.4; filter: grayscale(1); }
         
         #mood-label { display: inline-block; padding: 6px 20px; border-radius: 4px; background: rgba(255,255,255,0.05); font-weight: 800; letter-spacing: 3px; font-size: 0.65rem; border-bottom: 2px solid rgba(255,255,255,0.2); }
 
-        /* Bio-Insight Report */
-        .report-box { background: rgba(255,255,255,0.04); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.06); min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
+        .report-box { background: rgba(255,255,255,0.04); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.06); min-height: 90px; display: flex; flex-direction: column; justify-content: center; }
         .report-header { font-size: 0.5rem; letter-spacing: 2px; color: #3b82f6; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
-        .insight-text { font-size: 0.75rem; color: #d4d4d8; line-height: 1.4; font-weight: 500; transition: all 0.5s; }
+        .insight-text { font-size: 0.72rem; color: #d4d4d8; line-height: 1.4; font-weight: 500; transition: opacity 0.4s; }
 
         #onboarding { padding: 40px; text-align: left; height: 100%; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; background: #000; }
         .cta-btn { background: #fff; color: #000; border: none; padding: 22px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; }
@@ -47,8 +44,8 @@
     <div id="phone-wrapper">
         <div id="onboarding">
             <h1 style="font-size: 2.2rem; margin: 0; font-weight: 900;">AURA.</h1>
-            <p style="font-size: 0.8rem; color: #a1a1aa; margin: 20px 0;">Commercial Grade Emotional Analytics.<br>Secure, Private, Local-Only.</p>
-            <button class="cta-btn" onclick="launchApp()">START BIO-SYNC</button>
+            <p style="font-size: 0.8rem; color: #a1a1aa; margin: 20px 0;">Commercial Grade Emotional Analytics.<br>No-Data Leakage Protocol.</p>
+            <button class="cta-btn" onclick="launchApp()">INITIALIZE SYSTEM</button>
         </div>
 
         <div id="app">
@@ -56,33 +53,62 @@
             
             <div style="text-align:center;">
                 <div class="view-circle"><video id="webcam" autoplay playsinline muted></video></div>
-                <div id="mood-label">READY</div>
+                <div id="mood-label">CALIBRATING</div>
             </div>
 
             <div class="report-box">
-                <div class="report-header" id="report-type">Neural Status</div>
-                <div class="insight-text" id="insight-display">Scanning facial landmarks to establish biometric context...</div>
+                <div class="report-header" id="report-type">Neural Interface</div>
+                <div class="insight-text" id="insight-display">Please maintain a neutral expression to zero-out sensors...</div>
             </div>
 
-            <div style="font-size:0.4rem; opacity:0.2; text-align:center; letter-spacing:3px; padding-bottom:5px;">AURA CORE V35.0 // PRODUCTION READY</div>
+            <div style="font-size:0.4rem; opacity:0.2; text-align:center; letter-spacing:3px; padding-bottom:5px;">AURA PRO V36.0 // STABLE BUILD</div>
         </div>
     </div>
 
 <script type="module">
     import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const UI = {
-        Neutral: { color: "#050506", bar: "#3f3f46", text: "Maintaining homeostatic equilibrium. This state is ideal for deep cognitive focus." },
-        Happy: { color: "#022c22", bar: "#10b981", text: "You are part of the 90% who feel positive today! Endorphin release is optimizing your heart rate variability." },
-        Sad: { color: "#0c1a40", bar: "#3b82f6", text: "Detection: Emotional Fatigue. Note that localized sadness is a natural reset for neurological recovery." },
-        Frustrated: { color: "#310606", bar: "#ef4444", text: "Prolonged tension can cause accelerated muscle aging. Relax your brow; nothing is lost. Breathe through the pulse." },
-        Surprised: { color: "#331704", bar: "#f59e0b", text: "Cognitive Alertness spiked. Your brain is rapidly processing new environmental data at 10x speed." }
+    // INSIGHT ARRAYS: Rotating professional advice
+    const INSIGHTS = {
+        Neutral: [
+            "Maintaining homeostatic equilibrium. Ideal for focused deep work.",
+            "Resting state detected. Use this baseline for high-accuracy decision making.",
+            "Facial musculature is relaxed. Oxygen flow to the brain is currently optimal."
+        ],
+        Happy: [
+            "You're part of 90% who are happy today! Endorphins are optimizing your heart rate.",
+            "Zygomatic activation confirmed. Positive valence improves social cognitive processing.",
+            "Dopamine surge detected. This mental state increases creative problem-solving by 20%."
+        ],
+        Sad: [
+            "Emotional fatigue detected. Note that localized sadness is a natural reset for recovery.",
+            "Melancholy provides an opportunity for deep reflection. Allow the neural system to rest.",
+            "Decreased valence detected. Brief periods of reflection can improve future resilience."
+        ],
+        Frustrated: [
+            "Frustration prolonged can cause aging of muscles. Relax the brow; keep cool and calm.",
+            "Cortisol spike possible. Release the jaw tension; nothing is lost. Breathe slowly.",
+            "Elevated cognitive load. A 30-second reset can lower heart rate and clear focus."
+        ],
+        Surprised: [
+            "Amodal startle response. Your brain is processing new data at 10x normal speed.",
+            "Sensory alertness triggered. This state maximizes environmental information gathering.",
+            "Amygdala activation spike. Rapid response mode is currently prioritized."
+        ]
+    };
+
+    const UI_CONFIG = {
+        Neutral: { color: "#050506", bar: "#3f3f46" },
+        Happy: { color: "#022c22", bar: "#10b981" },
+        Sad: { color: "#0c1a40", bar: "#3b82f6" },
+        Frustrated: { color: "#310606", bar: "#ef4444" },
+        Surprised: { color: "#331704", bar: "#f59e0b" }
     };
 
     let faceLandmarker, video = document.getElementById("webcam");
-    let currentMood = "Neutral", history = [];
+    let currentMood = "Neutral", history = [], baseline = {}, calibrated = false, frames = 0;
     let moodProgress = { Happy: 0, Sad: 0, Frustrated: 0, Surprised: 0 };
-    const MAX_VAL = 400;
+    let insightIndices = { Happy: 0, Sad: 0, Frustrated: 0, Surprised: 0, Neutral: 0 };
 
     window.launchApp = async function() {
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
@@ -100,7 +126,7 @@
     function buildUI() {
         const box = document.getElementById('vibe-bars');
         Object.keys(moodProgress).forEach(key => {
-            box.innerHTML += `<div class="stat-row"><span>${key.toUpperCase()}</span><div class="bar-trail"><div id="bar-${key}" class="bar-glow" style="background:${UI[key].bar}; color:${UI[key].bar}"></div></div><span id="perc-${key}" style="width:25px; text-align:right; opacity:0.3">0%</span></div>`;
+            box.innerHTML += `<div class="stat-row"><span>${key.toUpperCase()}</span><div class="bar-trail"><div id="bar-${key}" class="bar-glow" style="background:${UI_CONFIG[key].bar}; color:${UI_CONFIG[key].bar}"></div></div><span id="perc-${key}" style="width:25px; text-align:right; opacity:0.3">0%</span></div>`;
         });
     }
 
@@ -110,39 +136,49 @@
             const s = {};
             result.faceBlendshapes[0].categories.forEach(c => s[c.categoryName] = c.score);
             
-            let det = "Neutral";
-            const smile = (s.mouthSmileLeft + s.mouthSmileRight) / 2;
-            const browDown = (s.browDownLeft + s.browDownRight) / 2;
+            // THE GHOSTING FIX: Accurate Baseline Capture (20 frames)
+            if (!calibrated) {
+                for (let k in s) baseline[k] = (baseline[k] || 0) + (s[k] / 20);
+                if (++frames >= 20) { calibrated = true; document.getElementById('mood-label').innerText = "SYSTEM ACTIVE"; }
+            } else {
+                let det = "Neutral";
+                const smile = (s.mouthSmileLeft + s.mouthSmileRight) / 2 - (baseline.mouthSmileLeft + baseline.mouthSmileRight) / 2;
+                const browDown = ((s.browDownLeft + s.browDownRight) / 2) - ((baseline.browDownLeft + baseline.browDownRight) / 2);
+                const frown = Math.max(s.mouthFrownLeft, s.mouthFrownRight) - Math.max(baseline.mouthFrownLeft, baseline.mouthFrownRight);
 
-            if (s.eyeWideLeft > 0.3 || s.jawOpen > 0.4) det = "Surprised";
-            else if (smile > 0.45) det = "Happy";
-            else if (s.mouthFrownLeft > 0.35 || s.browInnerUp > 0.4) det = "Sad";
-            else if (browDown > 0.22) det = "Frustrated"; // <--- High Sensitivity for mobile comfort
+                // RELATIVE THRESHOLDS (Prevents auto-fill)
+                if (s.eyeWideLeft > baseline.eyeWideLeft + 0.3) det = "Surprised";
+                else if (smile > 0.45) det = "Happy";
+                else if (frown > 0.4 || (s.browInnerUp - baseline.browInnerUp) > 0.4) det = "Sad";
+                else if (browDown > 0.22) det = "Frustrated";
 
-            if (det !== "Neutral" && moodProgress[det] < MAX_VAL) {
-                moodProgress[det] += 1.8;
-                const p = Math.min(100, Math.round((moodProgress[det] / MAX_VAL) * 100));
-                document.getElementById(`bar-${det}`).style.width = p + '%';
-                document.getElementById(`perc-${det}`).innerText = p + '%';
-            }
+                if (det !== "Neutral" && moodProgress[det] < 400) {
+                    moodProgress[det] += 1.8;
+                    const p = Math.min(100, Math.round((moodProgress[det] / 400) * 100));
+                    document.getElementById(`bar-${det}`).style.width = p + '%';
+                    document.getElementById(`perc-${det}`).innerText = p + '%';
+                }
 
-            history.push(det);
-            if (history.length > 12) history.shift();
-            const counts = history.reduce((a, b) => (a[b] = (a[b] || 0) + 1, a), {});
-            const topMood = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-            
-            if (counts[topMood] >= 9 && topMood !== currentMood) {
-                currentMood = topMood;
-                document.getElementById('phone-wrapper').style.background = UI[topMood].color;
-                document.getElementById("mood-label").innerText = topMood.toUpperCase();
+                history.push(det);
+                if (history.length > 12) history.shift();
+                const counts = history.reduce((a, b) => (a[b] = (a[b] || 0) + 1, a), {});
+                const topMood = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
                 
-                // Update Bio-Insight UI
-                document.getElementById('report-type').innerText = topMood === "Neutral" ? "Neural Status" : `${topMood} Analysis`;
-                document.getElementById('insight-display').style.opacity = 0;
-                setTimeout(() => {
-                    document.getElementById('insight-display').innerText = UI[topMood].text;
-                    document.getElementById('insight-display').style.opacity = 1;
-                }, 300);
+                if (counts[topMood] >= 9 && topMood !== currentMood) {
+                    currentMood = topMood;
+                    document.getElementById('phone-wrapper').style.background = UI_CONFIG[topMood].color;
+                    document.getElementById("mood-label").innerText = topMood.toUpperCase();
+                    
+                    // ROTATING INSIGHT LOGIC
+                    document.getElementById('report-type').innerText = topMood === "Neutral" ? "Neural Interface" : `${topMood} Analysis`;
+                    const idx = insightIndices[topMood] % INSIGHTS[topMood].length;
+                    document.getElementById('insight-display').style.opacity = 0;
+                    setTimeout(() => {
+                        document.getElementById('insight-display').innerText = INSIGHTS[topMood][idx];
+                        document.getElementById('insight-display').style.opacity = 1;
+                        insightIndices[topMood]++; // Rotate for next encounter
+                    }, 400);
+                }
             }
         }
         requestAnimationFrame(run);
