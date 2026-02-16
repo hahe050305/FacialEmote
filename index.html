@@ -161,10 +161,10 @@
                 const eyeWiden = Math.max(s.eyeWideLeft, s.eyeWideRight) - Math.max(baseline.eyeWideLeft, baseline.eyeWideRight);
                 const jawOpen = s.jawOpen - baseline.jawOpen;
 
-                if (eyeWiden > 0.25 || jawOpen > 0.35) det = "Surprised";
+                if (eyeWiden > 0.15 || jawOpen > 0.35) det = "Surprised";
                 else if (smile > 0.45) det = "Happy";
-                else if (frown > 0.4 || (s.browInnerUp - baseline.browInnerUp) > 0.4) det = "Sad";
-                else if (browDown > 0.22) det = "Frustrated";
+                else if (frown > 0.2 || (s.browInnerUp - baseline.browInnerUp) > 0.4) det = "Sad";
+                else if (browDown > 0.12) det = "Frustrated";
 
                 // Progress Bar Increment
                 if (det !== "Neutral" && moodProgress[det] < 400) {
